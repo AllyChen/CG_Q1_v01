@@ -60,11 +60,14 @@ void Display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();
-	glRotatef(angle, 0, 0, 1);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glRotatef(angle, 0, 1, 0);	
+	glPolygonMode(GL_FRONT, GL_LINE);
+	glPolygonMode(GL_BACK, GL_FILL);
 	// Draw space
 		DrawHexagram();
 		DrawCircle();
+		DrawMoon(0.6, 0);
+		DrawMoon(0.45, 0.4);
 	glPopMatrix();
 
 	
@@ -83,26 +86,19 @@ void Time(int t)
 void DrawHexagram()
 {
 	float color = int(angle) % 50;
-	printf("color :  %f \n", color);
 
 	// Draw a triangle
 	glBegin(GL_TRIANGLES);
 	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point1);
-	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point2);
-	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point3);
+	for (int i = 0; i < 6; i += 2)
+		glVertex3f(0.25 * cos(2 * Pi / 6 * i), 0.25 * sin(2 * Pi / 6 * i), 0.0f);
 	glEnd();
 
 	// Draw a triangle
 	glBegin(GL_TRIANGLES);
 	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point4);
-	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point5);
-	glColor3ub(255, 255, color * 200);
-	glVertex3fv(point6);
+	for (int i = 1; i < 6; i+=2)
+		glVertex3f(0.25 * cos(2 * Pi / 6 * i), 0.25 * sin(2 * Pi / 6 * i), 0.0f);
 	glEnd();
 }
 
@@ -118,4 +114,25 @@ void DrawCircle() {
 		glVertex2f(0.7f * cos(2 * Pi / n*i), 0.7f * sin(2 * Pi / n*i));
 	glEnd();
 
+}
+
+void DrawMoon(float x, float y) {
+
+	float color = int(angle) % 50;
+
+	glEnable(GL_DEPTH_TEST);
+
+	glBegin(GL_POLYGON);
+	glColor3ub(0, 0, 0);
+	for (int i = 0; i < n; ++i)
+		glVertex3f(0.06f * cos(2 * Pi / n*i) + x, 0.06f * sin(2 * Pi / n*i) + y + 0.05, 0.f);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glColor3ub(255, 255, color * 200);
+	for (int i = 0; i < n; ++i)
+		glVertex3f(0.1f * cos(2 * Pi / n*i) + x, 0.1f * sin(2 * Pi / n*i) + y, 0.001f);
+	glEnd();
+
+	
 }
